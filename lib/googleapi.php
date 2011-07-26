@@ -351,6 +351,17 @@ class google_docs {
 
         if($this->google_curl->info['http_code'] === 201){
             return true;
+        }else if($this->google_curl->info['http_code'] === 417){
+            //MDL-28439 Support http 1.0 proxies.
+            $this->google_curl->setHeader("Content-Type: ". $file->get_mimetype());
+            $this->google_curl->setHeader('Expect:');
+            $this->google_curl->post(google_docs::DOCUMENTFEED_URL, $file->get_content());
+            if($this->google_curl->info['http_code'] === 201){
+                return true;
+            }else{
+                return false;
+            }
+            //End MDL-28439
         }else{
             return false;
         }
