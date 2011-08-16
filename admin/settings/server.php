@@ -104,6 +104,7 @@ $temp->add(new admin_setting_configselect('proxytype', get_string('proxytype', '
 $temp->add(new admin_setting_configtext('proxyuser', get_string('proxyuser', 'admin'), get_string('configproxyuser', 'admin'), ''));
 $temp->add(new admin_setting_configpasswordunmask('proxypassword', get_string('proxypassword', 'admin'), get_string('configproxypassword', 'admin'), ''));
 $temp->add(new admin_setting_configtext('proxybypass', get_string('proxybypass', 'admin'), get_string('configproxybypass', 'admin'), 'localhost, 127.0.0.1'));
+$temp->add(new admin_setting_configcheckbox('proxyhttpone', get_string('proxyhttpone', 'admin'), get_string('configproxyhttpone', 'admin'), 0));
 $ADMIN->add('server', $temp);
 
 $temp = new admin_settingpage('maintenancemode', get_string('sitemaintenancemode', 'admin'));

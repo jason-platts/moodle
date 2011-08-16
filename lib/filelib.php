@@ -2454,6 +2454,9 @@ class curl {
         if (!empty($this->proxy_host)) {
             $this->proxy = array('proxy'=>$this->proxy_host);
         }
+        if (!empty($CFG->proxyhttpone)) {
+            $this->setopt(array('CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_0));
+        }
     }
     /**
      * Resets the CURL options that have already been set
