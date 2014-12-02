@@ -510,6 +510,9 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 
     if ($groupmode == VISIBLEGROUPS or $aag) {
         $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+        // Get user's own groups and put to the top.
+        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
+        $allowedgroups = $usergroups + $allowedgroups;
     } else {
         $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     }
@@ -603,6 +606,9 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
 
     if ($groupmode == VISIBLEGROUPS or $aag) {
         $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid); // any group in grouping
+        // Get user's own groups and put to the top.
+        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
+        $allowedgroups = $usergroups + $allowedgroups;
     } else {
         $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid); // only assigned groups
     }
