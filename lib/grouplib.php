@@ -508,11 +508,11 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
     $context = context_course::instance($course->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
 
+    $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
         $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
         // Get user's own groups and put to the top.
-        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
-        $allowedgroups = $usergroups + $allowedgroups;
+        $usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     } else {
         $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     }
@@ -524,9 +524,29 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         $groupsmenu[0] = get_string('allparticipants');
     }
 
+    if ($usergroups) {
+        // Add optgroup of user's own groups so these show first.
+        $usergroupsname = get_string('owngroups');
+        $groupsmenu[1] = array($usergroupsname => array());
+        foreach ($usergroups as $group) {
+            $groupsmenu[1][$usergroupsname][$group->id] = format_string($group->name);
+            // Remove this group from overall group list.
+            unset($allowedgroups[$group->id]);
+        }
+    }
+
     if ($allowedgroups) {
+        if ($usergroups) {
+            // Add optgroup of other groups.
+            $allowedgroupsname = get_string('othergroups');
+            $groupsmenu[2] = array($allowedgroupsname => array());
+        }
         foreach ($allowedgroups as $group) {
-            $groupsmenu[$group->id] = format_string($group->name);
+            if ($usergroups) {
+                $groupsmenu[2][$allowedgroupsname][$group->id] = format_string($group->name);
+            } else {
+                $groupsmenu[$group->id] = format_string($group->name);
+            }
         }
     }
 
@@ -604,11 +624,11 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
     $context = context_module::instance($cm->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
 
+    $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
         $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid); // any group in grouping
         // Get user's own groups and put to the top.
         $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
-        $allowedgroups = $usergroups + $allowedgroups;
     } else {
         $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid); // only assigned groups
     }
@@ -620,9 +640,29 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $groupsmenu[0] = get_string('allparticipants');
     }
 
+    if ($usergroups) {
+        // Add optgroup of user's own groups so these show first.
+        $usergroupsname = get_string('owngroups', 'theme_ou');
+        $groupsmenu[1] = array($usergroupsname => array());
+        foreach ($usergroups as $group) {
+            $groupsmenu[1][$usergroupsname][$group->id] = format_string($group->name);
+            // Remove this group from overall group list.
+            unset($allowedgroups[$group->id]);
+        }
+    }
+
     if ($allowedgroups) {
+        if ($usergroups) {
+            // Add optgroup of other groups.
+            $allowedgroupsname = get_string('othergroups', 'theme_ou');
+            $groupsmenu[2] = array($allowedgroupsname => array());
+        }
         foreach ($allowedgroups as $group) {
-            $groupsmenu[$group->id] = format_string($group->name);
+            if ($usergroups) {
+                $groupsmenu[2][$allowedgroupsname][$group->id] = format_string($group->name);
+            } else {
+                $groupsmenu[$group->id] = format_string($group->name);
+            }
         }
     }
 
